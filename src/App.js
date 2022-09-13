@@ -1,58 +1,137 @@
 import "./App.css";
-import Banner from "./components/Banner";
-import CreateQuiz from "./components/CreateQuiz";
+import "react-toastify/dist/ReactToastify.css";
 import Footer from "./components/Footer";
-import ManageQuiz from "./components/ManageQuiz";
 import Navbar from "./components/Navbar";
-import Question from "./components/Question";
-import QuizCreate from "./components/QuizCreate";
-import QuizList from "./components/QuizList";
-import QuizUsers from "./components/QuizUsers";
-import SpecialReservation from "./components/SpecialReservation";
-import UserQuiz from "./components/UserQuiz";
+import QuizList from "./pages/quiz/QuizList";
+import { ToastContainer } from "react-toastify";
+import { Route, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import QuizDetails from "./pages/quiz/QuizDetails";
+import Login from "./pages/authentication/Login";
+import RequireAuth from "./hooks/RequireAuth";
+import RequireAdmin from "./hooks/RequireAdmin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import Order from "./pages/admin/Order";
+import ManageQuiz from "./pages/admin/quiz/ManageQuiz";
+import QuizUsers from "./pages/admin/user/QuizUsers";
+import AllQuiz from "./pages/admin/quiz/AllQuiz";
+import PaymentTransaction from "./pages/admin/PaymentTransaction";
+import CreateQuestion from "./pages/admin/quiz/CreateQuestion";
+import UserAllQuiz from "./pages/userview/UserAllQuiz";
+import ManageUserQuiz from "./pages/userview/ManageUserQuiz";
+import Question from "./pages/userview/Question"
 
-const question = {
-  question: "what is your name ? ",
-  multiple: false,
-  options: [
-    {
-      id: 1,
-      value: "musa",
-    },
-    {
-      id: 2,
-      value: "kusa",
-    },
-    {
-      id: 3,
-      value: "lusa",
-    },
-    {
-      id: 4,
-      value: "nusa",
-    },
-  ],
-};
+
 
 function App() {
   return (
     <div className="App font-rubik">
+      <ToastContainer />
       <Navbar />
-      <div className="container mx-auto">
-        <label for="my-modal-4" class="btn modal-button">
-          open modal
-        </label>
-        <ManageQuiz />
-        <QuizUsers />
-        <Question question={question} />
-        <QuizCreate />
-        <Banner />
-        <QuizList />
-        <SpecialReservation />
-        <UserQuiz />
-      </div>
+      <Routes>
+        {/* <div className="container mx-auto">
+          <label for="my-modal-4" class="btn modal-button">
+            open modal
+          </label> */}
+        <Route path="/" element={<Home />}></Route>
+        <Route path="/login" element={<Login />}></Route>
+        <Route path="/quiz" element={<QuizList />}></Route>
+        <Route path="/quiz/:id" element={<QuizDetails />} />
+        <Route
+          path="/dashboard"
+          element={
+            <RequireAuth>
+              <UserAllQuiz />
+            </RequireAuth>
+          }
+        ></Route>
+        <Route
+          path="/dashboard/quiz/:id"
+          element={
+            <RequireAuth>
+              <ManageUserQuiz />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/dashboard/quiz/:quiz_taken/:attemp"
+          element={
+            <RequireAuth>
+              <Question />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/admin/dashboard"
+          element={
+            <RequireAdmin>
+              <AdminDashboard />
+            </RequireAdmin>
+          }
+        >
+          <Route
+            path="order"
+            element={
+              <RequireAdmin>
+                <Order />
+              </RequireAdmin>
+            }
+          />
+          <Route
+            path="transaction"
+            element={
+              <RequireAdmin>
+                <PaymentTransaction />
+              </RequireAdmin>
+            }
+          />
+          <Route
+            path="quiz"
+            element={
+              <RequireAdmin>
+                <AllQuiz />
+              </RequireAdmin>
+            }
+          />
+
+          <Route
+            path="user"
+            element={
+              <RequireAdmin>
+                <QuizUsers />
+              </RequireAdmin>
+            }
+          />
+          <Route
+            path="quiz/:id"
+            element={
+              <RequireAdmin>
+                <ManageQuiz />
+              </RequireAdmin>
+            }
+          ></Route>
+          <Route
+            path="quiz/:qid/createquestion"
+            element={
+              <RequireAdmin>
+                <CreateQuestion />
+              </RequireAdmin>
+            }
+          />
+          <Route
+            path="quiz/:qid/editquestion/:qtid"
+            element={
+              <RequireAdmin>
+                <CreateQuestion />
+              </RequireAdmin>
+            }
+          />
+        </Route>
+
+        {/* </div> */}
+      </Routes>
       <Footer />
-      <CreateQuiz />
     </div>
   );
 }
